@@ -1,204 +1,1293 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HUZA GROUP | Viajes, Vehículos, GPS y Gestión</title>
-  <meta name="description" content="HUZA GROUP ofrece servicios de viajes, compra y venta de vehículos, traspasos, instalación de GPS y gestión de documentos." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>HUZA GROUP | Viajes, Vehículos, GPS, Finanzas y Gestión</title>
+
+  <meta name="description" content="HUZA GROUP ofrece agencia de viajes, compra y venta de vehículos, GPS, gestión migratoria, traspasos, actos de venta, financiamiento y HUZA SAN.">
+
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;color:#111}
-    header{background:#0d1117;color:white;position:sticky;top:0;z-index:1000}
-    .nav{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:18px 20px}
-    .logo{font-size:28px;font-weight:800;letter-spacing:2px}
-    .logo span{color:#e63946}
-    nav a{color:white;text-decoration:none;margin-left:22px;font-size:14px}
-    nav a:hover{color:#4da3ff}
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:#f4f6f8;
+      color:#111827;
+      line-height:1.5;
+    }
+
+    :root{
+      --navy:#07192d;
+      --navy2:#0c2946;
+      --blue:#0c66b2;
+      --blue2:#1593e6;
+      --red:#e31e2f;
+      --white:#fff;
+      --gray:#667085;
+      --light:#eef3f7;
+      --gold:#d6a533;
+    }
+
+    a{
+      text-decoration:none;
+    }
+
+    img{
+      max-width:100%;
+      display:block;
+    }
+
+    .container{
+      width:min(1200px,92%);
+      margin:auto;
+    }
+
+    /* HEADER */
+    header{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:rgba(7,25,45,.97);
+      box-shadow:0 3px 15px rgba(0,0,0,.2);
+    }
+
+    .nav{
+      min-height:78px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand{
+      color:white;
+      font-weight:800;
+      font-size:28px;
+      letter-spacing:2px;
+    }
+
+    .brand span{
+      color:var(--red);
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap:22px;
+      flex-wrap:wrap;
+    }
+
+    nav a{
+      color:white;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    nav a:hover{
+      color:#6bc2ff;
+    }
+
+    .nav-whatsapp{
+      background:var(--red);
+      color:white;
+      padding:12px 18px;
+      border-radius:30px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    /* HERO */
     .hero{
-      min-height:560px;
-      background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
-      url('https://images.unsplash.com/photo-1486911278844-a81c5267e227?auto=format&fit=crop&w=1800&q=80') center/cover;
-      display:flex;align-items:center;color:white
+      min-height:650px;
+      display:flex;
+      align-items:center;
+      color:white;
+      background:
+        linear-gradient(90deg,rgba(3,17,31,.92) 0%,rgba(3,17,31,.64) 45%,rgba(3,17,31,.15) 100%),
+        url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85')
+        center/cover;
     }
-    .hero-content{max-width:1200px;margin:auto;width:100%;padding:60px 20px}
-    .hero h1{font-size:56px;max-width:720px;line-height:1.05;margin-bottom:18px}
-    .hero p{font-size:20px;max-width:650px;margin-bottom:25px}
-    .btn{display:inline-block;padding:14px 22px;border-radius:8px;text-decoration:none;font-weight:bold;margin-right:10px}
-    .btn-primary{background:#1261a8;color:white}
-    .btn-red{background:#d62828;color:white}
-    .section{max-width:1200px;margin:auto;padding:70px 20px}
-    .section h2{text-align:center;font-size:36px;margin-bottom:12px}
-    .section-sub{text-align:center;color:#666;margin-bottom:40px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-    .card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,.08)}
-    .card img{width:100%;height:210px;object-fit:cover}
-    .card-content{padding:22px}
-    .card h3{font-size:22px;margin-bottom:10px}
-    .card p{color:#555;line-height:1.6}
-    .dark{background:#101418;color:white}
-    .dark .section-sub{color:#bbb}
-    .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-    .review{background:white;color:#111;padding:25px;border-radius:12px}
-    .stars{color:#ffb703;font-size:20px;margin-bottom:10px}
-    .contact{display:grid;grid-template-columns:1fr 1fr;gap:35px}
-    .contact-box{background:white;padding:30px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.07)}
-    .contact-box p{margin:12px 0;line-height:1.5}
-    .floating-whatsapp{
-      position:fixed;right:22px;bottom:22px;background:#25D366;color:white;
-      width:62px;height:62px;border-radius:50%;display:flex;align-items:center;
-      justify-content:center;text-decoration:none;font-size:30px;box-shadow:0 6px 18px rgba(0,0,0,.3)
+
+    .hero-content{
+      max-width:720px;
+      padding:90px 0;
     }
-    footer{background:#080b0e;color:white;padding:28px 20px;text-align:center}
-    @media(max-width:850px){
-      nav{display:none}
-      .hero h1{font-size:40px}
-      .grid,.reviews,.contact{grid-template-columns:1fr}
+
+    .eyebrow{
+      color:#7dc8ff;
+      font-weight:800;
+      letter-spacing:2px;
+      font-size:13px;
+      margin-bottom:16px;
+      text-transform:uppercase;
+    }
+
+    .hero h1{
+      font-size:64px;
+      line-height:1.02;
+      margin-bottom:24px;
+    }
+
+    .hero p{
+      font-size:20px;
+      color:#eef6ff;
+      max-width:690px;
+      margin-bottom:28px;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:28px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px 22px;
+      border-radius:9px;
+      font-weight:800;
+      transition:.2s;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .btn-red{
+      background:var(--red);
+      color:white;
+    }
+
+    .btn-blue{
+      background:var(--blue);
+      color:white;
+    }
+
+    .btn-outline{
+      color:white;
+      border:2px solid #6fb8f2;
+      background:rgba(255,255,255,.04);
+    }
+
+    .hero-contact{
+      display:flex;
+      flex-wrap:wrap;
+      gap:25px;
+      font-size:16px;
+      font-weight:700;
+    }
+
+    /* GLOBAL SECTIONS */
+    section{
+      padding:80px 0;
+    }
+
+    .section-title{
+      text-align:center;
+      margin-bottom:45px;
+    }
+
+    .section-title small{
+      color:var(--red);
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:2px;
+    }
+
+    .section-title h2{
+      font-size:42px;
+      color:var(--navy);
+      margin:8px 0 10px;
+    }
+
+    .section-title p{
+      color:var(--gray);
+      max-width:730px;
+      margin:auto;
+    }
+
+    /* SERVICES */
+    .services-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+
+    .service-card{
+      background:white;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 10px 35px rgba(8,37,63,.1);
+      transition:.25s;
+    }
+
+    .service-card:hover{
+      transform:translateY(-6px);
+    }
+
+    .service-card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+    }
+
+    .service-body{
+      padding:24px;
+    }
+
+    .service-body h3{
+      font-size:24px;
+      color:var(--navy);
+      margin-bottom:10px;
+    }
+
+    .service-body p{
+      color:#556274;
+      margin-bottom:18px;
+    }
+
+    .service-link{
+      display:inline-block;
+      color:var(--blue);
+      font-weight:800;
+    }
+
+    /* FINANCING STRIP */
+    .finance-strip{
+      background:linear-gradient(135deg,#07192d,#10395e);
+      color:white;
+      padding:36px 0;
+    }
+
+    .finance-wrap{
+      display:grid;
+      grid-template-columns:1.15fr 1fr;
+      gap:30px;
+      align-items:center;
+    }
+
+    .finance-wrap h2{
+      font-size:38px;
+      margin-bottom:12px;
+    }
+
+    .finance-wrap h2 span{
+      color:#ff3348;
+    }
+
+    .finance-wrap p{
+      color:#e5eef7;
+      font-size:17px;
+      margin-bottom:18px;
+    }
+
+    .finance-list{
+      display:grid;
+      gap:9px;
+    }
+
+    .finance-list div{
+      font-weight:700;
+    }
+
+    .finance-box{
+      background:white;
+      color:var(--navy);
+      border-radius:18px;
+      padding:28px;
+      text-align:center;
+    }
+
+    .finance-box h3{
+      font-size:28px;
+      margin-bottom:8px;
+    }
+
+    .finance-box .gold{
+      color:#9b7418;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+
+    /* DETAIL SECTIONS */
+    .detail{
+      background:white;
+    }
+
+    .detail.alt{
+      background:#edf3f8;
+    }
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:55px;
+      align-items:center;
+    }
+
+    .detail-grid.reverse .detail-copy{
+      order:2;
+    }
+
+    .detail-grid.reverse .gallery{
+      order:1;
+    }
+
+    .detail-copy h2{
+      font-size:42px;
+      color:var(--navy);
+      margin-bottom:18px;
+    }
+
+    .detail-copy p{
+      color:#536274;
+      font-size:17px;
+      margin-bottom:15px;
+    }
+
+    .detail-copy strong{
+      color:var(--navy);
+    }
+
+    .gallery{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .gallery img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+      border-radius:15px;
+    }
+
+    .gallery img:first-child{
+      grid-column:1/3;
+      height:300px;
+    }
+
+    /* MIGRATION DESTINATIONS */
+    .countries{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin:20px 0 25px;
+    }
+
+    .country{
+      background:#eaf4ff;
+      border:1px solid #c8e1f7;
+      color:#0b518a;
+      border-radius:25px;
+      padding:9px 14px;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    /* BENEFITS */
+    .benefits{
+      background:var(--navy);
+      color:white;
+      padding:35px 0;
+    }
+
+    .benefit-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .benefit{
+      text-align:center;
+      padding:18px;
+    }
+
+    .benefit h3{
+      margin-bottom:5px;
+    }
+
+    .benefit p{
+      color:#c9d8e6;
+      font-size:14px;
+    }
+
+    /* REVIEWS */
+    .reviews-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:20px;
+    }
+
+    .review{
+      background:white;
+      padding:25px;
+      border-radius:16px;
+      box-shadow:0 8px 25px rgba(0,0,0,.07);
+    }
+
+    .stars{
+      color:#f5a623;
+      font-size:20px;
+      margin-bottom:8px;
+    }
+
+    .review p{
+      color:#4c596a;
+      font-style:italic;
+    }
+
+    .review strong{
+      display:block;
+      margin-top:12px;
+      color:var(--navy);
+    }
+
+    /* ABOUT */
+    .about{
+      background:#f7f9fb;
+    }
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:45px;
+      align-items:center;
+    }
+
+    .about img{
+      border-radius:18px;
+      width:100%;
+      min-height:400px;
+      object-fit:cover;
+    }
+
+    .about h2{
+      font-size:42px;
+      color:var(--navy);
+      margin-bottom:18px;
+    }
+
+    .about p{
+      color:#556274;
+      margin-bottom:14px;
+      font-size:17px;
+    }
+
+    /* CONTACT */
+    .contact{
+      background:linear-gradient(135deg,#07192d,#0c3153);
+      color:white;
+    }
+
+    .contact-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:35px;
+    }
+
+    .contact h2{
+      font-size:42px;
+      margin-bottom:18px;
+    }
+
+    .contact p{
+      color:#dce9f4;
+      margin-bottom:12px;
+    }
+
+    .contact-box{
+      background:white;
+      color:var(--navy);
+      padding:30px;
+      border-radius:18px;
+    }
+
+    .contact-box h3{
+      font-size:26px;
+      margin-bottom:16px;
+    }
+
+    .contact-row{
+      margin-bottom:14px;
+    }
+
+    .contact-row strong{
+      display:block;
+      margin-bottom:3px;
+    }
+
+    /* FLOATING WHATSAPP */
+    .wa-float{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:62px;
+      height:62px;
+      border-radius:50%;
+      background:#25D366;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:bold;
+      box-shadow:0 8px 24px rgba(0,0,0,.3);
+      z-index:999;
+    }
+
+    footer{
+      background:#04111f;
+      color:white;
+      padding:30px 0;
+      text-align:center;
+    }
+
+    footer p{
+      color:#b8c6d4;
+      margin-top:7px;
+    }
+
+    /* MOBILE */
+    @media(max-width:950px){
+      nav{
+        display:none;
+      }
+
+      .services-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .detail-grid,
+      .finance-wrap,
+      .about-grid,
+      .contact-grid{
+        grid-template-columns:1fr;
+      }
+
+      .detail-grid.reverse .detail-copy,
+      .detail-grid.reverse .gallery{
+        order:initial;
+      }
+
+      .benefit-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .hero h1{
+        font-size:48px;
+      }
+    }
+
+    @media(max-width:650px){
+      .services-grid,
+      .reviews-grid,
+      .benefit-grid{
+        grid-template-columns:1fr;
+      }
+
+      .hero{
+        min-height:620px;
+      }
+
+      .hero h1{
+        font-size:40px;
+      }
+
+      .hero p{
+        font-size:17px;
+      }
+
+      .section-title h2,
+      .detail-copy h2,
+      .about h2,
+      .contact h2{
+        font-size:34px;
+      }
+
+      .gallery{
+        grid-template-columns:1fr;
+      }
+
+      .gallery img:first-child{
+        grid-column:auto;
+      }
     }
   </style>
 </head>
+
 <body>
 
 <header>
-  <div class="nav">
-    <div class="logo">HUZA <span>GROUP</span></div>
+  <div class="container nav">
+    <a class="brand" href="#inicio">HUZA <span>GROUP</span></a>
+
     <nav>
-      <a href="#inicio">INICIO</a>
-      <a href="#servicios">SERVICIOS</a>
-      <a href="#nosotros">NOSOTROS</a>
-      <a href="#resenas">RESEÑAS</a>
-      <a href="#contacto">CONTACTO</a>
+      <a href="#inicio">Inicio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#viajes">Viajes</a>
+      <a href="#gps">GPS</a>
+      <a href="#migratoria">Migración</a>
+      <a href="#huzasan">HUZA SAN</a>
+      <a href="#resenas">Reseñas</a>
+      <a href="#contacto">Contacto</a>
     </nav>
+
+    <a class="nav-whatsapp" href="https://wa.me/18495226533" target="_blank">
+      WhatsApp 849-522-6533
+    </a>
   </div>
 </header>
 
-<section class="hero" id="inicio">
-  <div class="hero-content">
-    <h1>Más que una solución, tu aliado en el camino</h1>
-    <p>
-      Viajes, vehículos, gestión de documentos, instalación de GPS y soluciones
-      diseñadas para hacerte la vida más fácil.
-    </p>
-    <a class="btn btn-primary" href="#servicios">Ver servicios</a>
-    <a class="btn btn-red" href="https://wa.me/18495226533" target="_blank">Escribir por WhatsApp</a>
-  </div>
-</section>
+<main>
 
-<section class="section" id="servicios">
-  <h2>Nuestros servicios</h2>
-  <p class="section-sub">Soluciones prácticas, rápidas y confiables.</p>
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="container">
+      <div class="hero-content">
+        <div class="eyebrow">HUZA GROUP · República Dominicana</div>
 
-  <div class="grid">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=80">
-      <div class="card-content">
-        <h3>Agencia de viajes</h3>
-        <p>Te ayudamos a organizar tu viaje, encontrar opciones y gestionar tu experiencia de principio a fin.</p>
+        <h1>Más que una solución, tu aliado en el camino</h1>
+
+        <p>
+          Viajes, vehículos, instalación de GPS, gestión migratoria,
+          actos de venta, traspasos, financiamiento y soluciones financieras
+          para acompañarte en cada etapa.
+        </p>
+
+        <div class="actions">
+          <a class="btn btn-red" href="https://wa.me/18495226533" target="_blank">
+            Cotizar por WhatsApp
+          </a>
+
+          <a class="btn btn-outline" href="#servicios">
+            Ver servicios
+          </a>
+        </div>
+
+        <div class="hero-contact">
+          <span>☎ 849-522-6533</span>
+          <span>✉ info@huzagroup.lat</span>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1000&q=80">
-      <div class="card-content">
-        <h3>Compra y venta de vehículos</h3>
-        <p>Te acompañamos en el proceso de compra, venta y gestión de vehículos.</p>
+  <!-- SERVICES -->
+  <section id="servicios">
+    <div class="container">
+
+      <div class="section-title">
+        <small>Nuestros servicios</small>
+        <h2>Soluciones reales para cada etapa de tu vida</h2>
+        <p>
+          Cada servicio cuenta con atención personalizada, acompañamiento y opciones
+          de financiamiento.
+        </p>
+      </div>
+
+      <div class="services-grid">
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1000&q=80" alt="Agencia de viajes">
+          <div class="service-body">
+            <h3>Agencia de Viajes</h3>
+            <p>Vuelos, hoteles, paquetes turísticos y experiencias para ti y tu familia.</p>
+            <a class="service-link" href="#viajes">Conocer más →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80" alt="Vehículos">
+          <div class="service-body">
+            <h3>Compra y Venta de Vehículos</h3>
+            <p>Encuentra o vende tu vehículo con acompañamiento y respaldo.</p>
+            <a class="service-link" href="#vehiculos">Ver vehículos →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80" alt="GPS">
+          <div class="service-body">
+            <h3>Instalación de GPS</h3>
+            <p>Protege tu inversión y mantén el control de tu vehículo o flotilla.</p>
+            <a class="service-link" href="#gps">Saber más →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1000&q=80" alt="Traspaso">
+          <div class="service-body">
+            <h3>Traspaso de Matrícula</h3>
+            <p>Gestionamos tu traspaso con organización y acompañamiento.</p>
+            <a class="service-link" href="#documentos">Conocer más →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1000&q=80" alt="Acto de venta">
+          <div class="service-body">
+            <h3>Acto de Venta</h3>
+            <p>Preparación y gestión de documentación para tu proceso de compraventa.</p>
+            <a class="service-link" href="#documentos">Saber más →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1000&q=80" alt="Gestión migratoria">
+          <div class="service-body">
+            <h3>Gestión Migratoria</h3>
+            <p>Te acompañamos en el proceso de buscar nuevas oportunidades.</p>
+            <a class="service-link" href="#migratoria">Conocer más →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1000&q=80" alt="Finanzas">
+          <div class="service-body">
+            <h3>Finanzas y Asesoría</h3>
+            <p>Soluciones financieras y opciones para organizar tus proyectos.</p>
+            <a class="service-link" href="#huzasan">Ver opciones →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1579621970795-87facc2f976d?auto=format&fit=crop&w=1000&q=80" alt="HUZA SAN">
+          <div class="service-body">
+            <h3>HUZA SAN</h3>
+            <p>Certificado financiero y planes de ahorro pensados para tu futuro.</p>
+            <a class="service-link" href="#huzasan">Conocer HUZA SAN →</a>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=80" alt="Financiamiento">
+          <div class="service-body">
+            <h3>Financiamiento</h3>
+            <p>Opciones de financiamiento disponibles para nuestros servicios.</p>
+            <a class="service-link" href="#financiamiento">Ver financiamiento →</a>
+          </div>
+        </article>
+
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=1000&q=80">
-      <div class="card-content">
-        <h3>Instalación de GPS</h3>
-        <p>Instalación y seguimiento GPS para vehículos particulares y flotillas.</p>
+  <!-- HUZA SAN STRIP -->
+  <section class="finance-strip" id="huzasan">
+    <div class="container finance-wrap">
+
+      <div>
+        <div class="eyebrow">HUZA SAN · Certificado financiero</div>
+
+        <h2>Ahorra hoy. <span>Construye tu mañana.</span></h2>
+
+        <p>
+          En HUZA GROUP sabemos que un ahorro dignifica tu futuro.
+          Ese dinerito que guardas hoy puede ayudarte mañana a subir un escalón más.
+        </p>
+
+        <p>
+          Ahorra e invierte con nosotros para ti y los tuyos.
+          Tu dinero de hoy puede convertirse en el activo que mejore tu calidad de vida mañana.
+        </p>
+
+        <div class="finance-list">
+          <div>✓ Planes de ahorro</div>
+          <div>✓ Certificado financiero HUZA SAN</div>
+          <div>✓ Acompañamiento personalizado</div>
+          <div>✓ Más de 25 años de experiencia en el mercado</div>
+        </div>
+      </div>
+
+      <div class="finance-box">
+        <h3>HUZA SAN</h3>
+        <div class="gold">CERTIFICADO FINANCIERO</div>
+
+        <p>
+          Un paso hoy puede convertirse en una oportunidad mañana.
+        </p>
+
+        <br>
+
+        <a class="btn btn-red" href="https://wa.me/18495226533?text=Hola%20quiero%20información%20sobre%20HUZA%20SAN" target="_blank">
+          Quiero conocer HUZA SAN
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SAVINGS DETAIL -->
+  <section class="detail">
+    <div class="container detail-grid">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Ahorro e inversión</small>
+
+        <h2>Tu futuro empieza con lo que decides hacer hoy</h2>
+
+        <p>
+          Sabemos que muchas metas comienzan con algo pequeño:
+          un ahorro constante, una decisión bien tomada o el deseo de darle
+          mejores oportunidades a tu familia.
+        </p>
+
+        <p>
+          Por eso HUZA SAN busca ayudarte a construir una cultura de ahorro,
+          organización financiera y planificación para el futuro.
+        </p>
+
+        <p>
+          <strong>
+            Somos tu aliado en el camino.
+          </strong>
+        </p>
+
+        <a class="btn btn-blue" href="https://wa.me/18495226533?text=Quiero%20información%20sobre%20planes%20de%20ahorro" target="_blank">
+          Consultar planes de ahorro
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=1200&q=80" alt="Familia ahorrando">
+        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80" alt="Familia feliz">
+        <img src="https://images.unsplash.com/photo-1581579185169-7d8f3d570f1d?auto=format&fit=crop&w=800&q=80" alt="Familia planificando">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MIGRATION -->
+  <section class="detail alt" id="migratoria">
+    <div class="container detail-grid reverse">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Gestión migratoria</small>
+
+        <h2>Un nuevo país. Una nueva misión. Un nuevo futuro.</h2>
+
+        <p>
+          Sabemos lo difícil que puede ser la situación cuando deseas buscar
+          un futuro mejor para ti y los tuyos.
+        </p>
+
+        <p>
+          Por eso te acompañamos paso a paso:
+          organización de documentos, orientación del proceso, seguimiento
+          y apoyo durante tu gestión.
+        </p>
+
+        <p>
+          Queremos caminar contigo hasta ese momento en que podamos decirte:
+          <strong>hasta luego, buen viaje y éxito en tu nueva etapa.</strong>
+        </p>
+
+        <div class="countries">
+          <span class="country">🇨🇦 Canadá</span>
+          <span class="country">🇧🇷 Brasil</span>
+          <span class="country">🇲🇽 México</span>
+          <span class="country">🇺🇸 Estados Unidos</span>
+          <span class="country">🇪🇺 Espacio Schengen</span>
+          <span class="country">🇨🇱 Chile</span>
+          <span class="country">🇵🇦 Panamá</span>
+          <span class="country">🇯🇲 Jamaica</span>
+        </div>
+
+        <a class="btn btn-red" href="https://wa.me/18495226533?text=Quiero%20información%20sobre%20gestión%20migratoria" target="_blank">
+          Consultar gestión migratoria
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=1200&q=80" alt="Familia viajando">
+        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=80" alt="Personas trabajando">
+        <img src="https://images.unsplash.com/photo-1504150558240-0b4fd8946624?auto=format&fit=crop&w=800&q=80" alt="Viaje internacional">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GPS -->
+  <section class="detail" id="gps">
+    <div class="container detail-grid">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Seguridad vehicular</small>
+
+        <h2>Sabemos cuánto te costó. Protege tu inversión.</h2>
+
+        <p>
+          Tu vehículo representa esfuerzo, trabajo y sacrificio.
+          Por eso ofrecemos instalación de GPS para ayudarte a mantener
+          ubicación, control y seguimiento.
+        </p>
+
+        <p>
+          Ideal para vehículos particulares, negocios y flotillas.
+        </p>
+
+        <p>
+          <strong>
+            Seguridad, seguimiento y tranquilidad cuando más lo necesitas.
+          </strong>
+        </p>
+
+        <a class="btn btn-blue" href="https://wa.me/18495226533?text=Quiero%20cotizar%20una%20instalación%20de%20GPS" target="_blank">
+          Cotizar GPS
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" alt="GPS vehículo">
+        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80" alt="Vehículo">
+        <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80" alt="Seguridad vehicular">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- VEHICLES -->
+  <section class="detail alt" id="vehiculos">
+    <div class="container detail-grid reverse">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Vehículos</small>
+
+        <h2>Encuentra el vehículo ideal para tu próxima etapa</h2>
+
+        <p>
+          Compra o vende tu vehículo con el acompañamiento de HUZA GROUP.
+        </p>
+
+        <p>
+          Podemos ayudarte con la negociación, documentación, acto de venta,
+          traspaso y otros servicios relacionados.
+        </p>
+
+        <a class="btn btn-red" href="https://wa.me/18495226533?text=Quiero%20información%20sobre%20vehículos" target="_blank">
+          Hablar con un asesor
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" alt="Venta de vehículos">
+        <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80" alt="Vehículo moderno">
+        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80" alt="SUV">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TRAVEL -->
+  <section class="detail" id="viajes">
+    <div class="container detail-grid">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Viajes</small>
+
+        <h2>El mundo tiene más de un camino esperándote</h2>
+
+        <p>
+          Te ayudamos con opciones de vuelos, alojamiento y organización
+          de tu viaje para que puedas concentrarte en disfrutar la experiencia.
+        </p>
+
+        <p>
+          Vacaciones, viajes familiares, escapadas, negocios y nuevos destinos.
+        </p>
+
+        <a class="btn btn-blue" href="https://wa.me/18495226533?text=Quiero%20cotizar%20un%20viaje" target="_blank">
+          Cotizar viaje
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80" alt="Viajes">
+        <img src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=800&q=80" alt="Turismo">
+        <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80" alt="Viajar">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DOCUMENTS -->
+  <section class="detail alt" id="documentos">
+    <div class="container detail-grid reverse">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Documentación</small>
+
+        <h2>Traspasos y actos de venta sin complicaciones innecesarias</h2>
+
+        <p>
+          Gestionamos documentación relacionada con vehículos,
+          traspasos de matrícula y actos de venta.
+        </p>
+
+        <p>
+          Nuestro objetivo es ayudarte a mantener cada proceso organizado,
+          claro y debidamente acompañado.
+        </p>
+
+        <a class="btn btn-red" href="https://wa.me/18495226533?text=Quiero%20información%20sobre%20traspaso%20o%20acto%20de%20venta" target="_blank">
+          Solicitar información
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80" alt="Documentos">
+        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80" alt="Firma de documentos">
+        <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80" alt="Acuerdo">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FINANCING -->
+  <section class="detail" id="financiamiento">
+    <div class="container detail-grid">
+
+      <div class="detail-copy">
+        <small class="eyebrow" style="color:#0c66b2">Financiamiento</small>
+
+        <h2>Todos nuestros servicios pueden tener una solución financiera</h2>
+
+        <p>
+          Pregunta por nuestras opciones de financiamiento disponibles
+          para distintos servicios de HUZA GROUP.
+        </p>
+
+        <p>
+          Analizamos cada caso para orientarte sobre las alternativas disponibles.
+        </p>
+
+        <a class="btn btn-blue" href="https://wa.me/18495226533?text=Quiero%20información%20sobre%20financiamiento" target="_blank">
+          Consultar financiamiento
+        </a>
+      </div>
+
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80" alt="Financiamiento">
+        <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80" alt="Asesoría financiera">
+        <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=800&q=80" alt="Ahorro">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="benefits">
+    <div class="container benefit-grid">
+
+      <div class="benefit">
+        <h3>Atención rápida</h3>
+        <p>Tu tiempo es valioso.</p>
+      </div>
+
+      <div class="benefit">
+        <h3>Acompañamiento</h3>
+        <p>Te guiamos durante el proceso.</p>
+      </div>
+
+      <div class="benefit">
+        <h3>Organización</h3>
+        <p>Procesos claros y estructurados.</p>
+      </div>
+
+      <div class="benefit">
+        <h3>Soporte por WhatsApp</h3>
+        <p>849-522-6533</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <div class="container about-grid">
+
+      <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=80" alt="HUZA GROUP">
+
+      <div>
+        <small class="eyebrow" style="color:#0c66b2">Nosotros</small>
+
+        <h2>HUZA GROUP</h2>
+
+        <p>
+          Somos una empresa dominicana enfocada en brindar soluciones en viajes,
+          vehículos, gestión de documentos, instalación de GPS, servicios financieros
+          y gestión migratoria.
+        </p>
+
+        <p>
+          Nuestra filosofía es simple:
+          <strong>estar contigo en el camino.</strong>
+        </p>
+
+        <p>
+          Trabajamos para conectar personas, soluciones y oportunidades.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="resenas">
+    <div class="container">
+
+      <div class="section-title">
+        <small>Reseñas</small>
+        <h2>Lo que dicen nuestros clientes</h2>
+        <p>Experiencias de personas que han confiado en nuestros servicios.</p>
+      </div>
+
+      <div class="reviews-grid">
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Muy puntuales y organizados. Me mantuvieron informado durante todo el proceso.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Profesionales, atentos y con muy buena comunicación.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“La instalación del GPS fue rápida y el trato excelente.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Me ayudaron con mis documentos y todo estuvo muy bien organizado.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Muy buen servicio. Siempre respondieron mis preguntas.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Excelente acompañamiento durante mi gestión.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Los recomiendo. Trato profesional y proceso claro.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Muy organizados y responsables. Excelente atención.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Me orientaron correctamente y pude resolver lo que necesitaba.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>“Good service. Professional and very helpful.”</p>
+          <strong>Cliente HUZA GROUP</strong>
+        </div>
+
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1000&q=80">
-      <div class="card-content">
-        <h3>Traspaso de matrícula</h3>
-        <p>Gestionamos tu traspaso de vehículo de forma organizada y sin complicaciones.</p>
+  <!-- CONTACT -->
+  <section class="contact" id="contacto">
+    <div class="container contact-grid">
+
+      <div>
+        <small class="eyebrow">Contáctanos</small>
+
+        <h2>Estamos aquí para ayudarte</h2>
+
+        <p>
+          Escríbenos o llámanos. Nuestro equipo está disponible para orientarte
+          sobre cualquiera de nuestros servicios.
+        </p>
+
+        <br>
+
+        <a class="btn btn-red" href="https://wa.me/18495226533" target="_blank">
+          Contactar por WhatsApp
+        </a>
       </div>
-    </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1000&q=80">
-      <div class="card-content">
-        <h3>Actos de venta y documentos</h3>
-        <p>Apoyo en actos de venta, documentación vehicular y otros procesos administrativos.</p>
+      <div class="contact-box">
+        <h3>HUZA GROUP</h3>
+
+        <div class="contact-row">
+          <strong>Teléfono / WhatsApp</strong>
+          <span>849-522-6533</span>
+        </div>
+
+        <div class="contact-row">
+          <strong>Correo</strong>
+          <span>info@huzagroup.lat</span>
+        </div>
+
+        <div class="contact-row">
+          <strong>Dirección</strong>
+          <span>
+            Avenida Martin Luther King Jr,<br>
+            Plaza Granada Oriental,<br>
+            2do nivel, local 24,<br>
+            Santo Domingo Este,<br>
+            República Dominicana
+          </span>
+        </div>
+
+        <div class="contact-row">
+          <strong>Sitio web</strong>
+          <span>huzagroup.lat</span>
+        </div>
       </div>
+
     </div>
+  </section>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80">
-      <div class="card-content">
-        <h3>Gestión migratoria</h3>
-        <p>Orientación y acompañamiento en distintos procesos y gestiones migratorias.</p>
-      </div>
-    </div>
-  </div>
-</section>
+</main>
 
-<section class="section dark" id="nosotros">
-  <h2>Sobre HUZA GROUP</h2>
-  <p class="section-sub">Un grupo enfocado en resolver, facilitar y acompañarte.</p>
-  <p style="max-width:850px;margin:auto;text-align:center;line-height:1.8;font-size:18px;">
-    HUZA GROUP nace con el objetivo de ofrecer diferentes servicios en un solo lugar.
-    Nuestra misión es brindar atención cercana, soluciones claras y acompañamiento
-    durante cada proceso.
-  </p>
-</section>
-
-<section class="section" id="resenas">
-  <h2>Lo que dicen nuestros clientes</h2>
-  <p class="section-sub">Experiencias de quienes han confiado en nosotros.</p>
-
-  <div class="reviews">
-    <div class="review">
-      <div class="stars">★★★★★</div>
-      <p>“Muy buena atención y seguimiento durante todo el proceso.”</p>
-      <strong>Cliente HUZA GROUP</strong>
-    </div>
-    <div class="review">
-      <div class="stars">★★★★★</div>
-      <p>“Me orientaron rápido y pude resolver mi gestión sin complicaciones.”</p>
-      <strong>Cliente HUZA GROUP</strong>
-    </div>
-    <div class="review">
-      <div class="stars">★★★★★</div>
-      <p>“Excelente servicio y comunicación. Los recomiendo.”</p>
-      <strong>Cliente HUZA GROUP</strong>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="contacto">
-  <h2>Contacto</h2>
-  <p class="section-sub">Estamos disponibles para ayudarte.</p>
-
-  <div class="contact">
-    <div class="contact-box">
-      <h3>HUZA GROUP</h3>
-      <p><strong>Teléfono:</strong> <a href="tel:+18495226533">849-522-6533</a></p>
-      <p><strong>WhatsApp:</strong> <a href="https://wa.me/18495226533" target="_blank">849-522-6533</a></p>
-      <p><strong>Correo:</strong> grouphuza@gmail.com</p>
-      <p><strong>Dirección:</strong> República Dominicana</p>
-      <p><strong>Web:</strong> huzagroup.lat</p>
-    </div>
-
-    <div class="contact-box">
-      <h3>Solicita información</h3>
-      <p>Para cotizaciones, viajes, vehículos, GPS, traspasos o cualquier otro servicio:</p>
-      <br>
-      <a class="btn btn-primary" href="tel:+18495226533">Llamar ahora</a>
-      <a class="btn btn-red" href="https://wa.me/18495226533" target="_blank">WhatsApp</a>
-    </div>
-  </div>
-</section>
-
-<a class="floating-whatsapp" href="https://wa.me/18495226533" target="_blank">☏</a>
+<a class="wa-float" href="https://wa.me/18495226533" target="_blank" aria-label="WhatsApp">
+  ☎
+</a>
 
 <footer>
-  © 2026 HUZA GROUP · Todos los derechos reservados · huzagroup.lat
+  <div class="container">
+    <strong>HUZA GROUP</strong>
+    <p>Más que una solución, tu aliado en el camino.</p>
+    <p>© 2026 HUZA GROUP · Todos los derechos reservados.</p>
+  </div>
 </footer>
 
 </body>
