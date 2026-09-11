@@ -69,15 +69,18 @@
       gap:20px;
     }
 
-    .brand{
-      color:white;
-      font-weight:800;
-      font-size:28px;
-      letter-spacing:2px;
+    .brand-logo{
+      display:flex;
+      align-items:center;
+      flex-shrink:0;
     }
 
-    .brand span{
-      color:var(--red);
+    .brand-logo img{
+      height:64px;
+      width:auto;
+      max-width:210px;
+      object-fit:contain;
+      display:block;
     }
 
     nav{
@@ -593,6 +596,11 @@
     }
 
     @media(max-width:650px){
+      .brand-logo img{
+        height:48px;
+        max-width:160px;
+      }
+
       .services-grid,
       .reviews-grid,
       .benefit-grid{
@@ -633,7 +641,9 @@
 
 <header>
   <div class="container nav">
-    <a class="brand" href="#inicio">HUZA <span>GROUP</span></a>
+    <a class="brand-logo" href="#inicio">
+      <img src="logo-huza.jpeg" alt="HUZA GROUP">
+    </a>
 
     <nav>
       <a href="#inicio">Inicio</a>
