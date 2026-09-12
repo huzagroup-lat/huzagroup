@@ -634,7 +634,144 @@
         grid-column:auto;
       }
     }
-  </style>
+  
+    /* RENT A CAR + INMOBILIARIA */
+    .featured-section{
+      background:linear-gradient(180deg,#ffffff 0%,#eef5fb 100%);
+    }
+    .featured-badge{
+      display:inline-block;
+      background:var(--red);
+      color:#fff;
+      padding:8px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      margin-bottom:10px;
+    }
+    .listing-toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
+    .listing-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+    .listing-card{
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 10px 35px rgba(8,37,63,.10);
+    }
+    .listing-card img{
+      width:100%;
+      height:235px;
+      object-fit:cover;
+    }
+    .listing-card-body{
+      padding:22px;
+    }
+    .listing-price{
+      font-size:25px;
+      font-weight:900;
+      color:var(--red);
+      margin:8px 0 12px;
+    }
+    .spec-list{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px 12px;
+      color:#536274;
+      font-size:14px;
+      margin-bottom:16px;
+    }
+    .admin-panel{
+      background:#07192d;
+      color:#fff;
+      padding:38px 0;
+    }
+    .admin-box{
+      background:#fff;
+      color:#111827;
+      border-radius:18px;
+      padding:25px;
+      box-shadow:0 10px 35px rgba(0,0,0,.15);
+      margin-top:20px;
+    }
+    .admin-tabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .admin-tabs button{
+      border:0;
+      padding:11px 16px;
+      border-radius:9px;
+      font-weight:800;
+      cursor:pointer;
+      background:#eaf4ff;
+      color:#0b518a;
+    }
+    .admin-tabs button.active{
+      background:var(--blue);
+      color:#fff;
+    }
+    .admin-form{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+    .admin-form .full{
+      grid-column:1/-1;
+    }
+    .admin-form input,.admin-form textarea,.admin-form select{
+      width:100%;
+      padding:12px 13px;
+      border:1px solid #ccd7e2;
+      border-radius:9px;
+      font:inherit;
+    }
+    .admin-form textarea{
+      min-height:100px;
+      resize:vertical;
+    }
+    .admin-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .admin-note{
+      font-size:13px;
+      color:#667085;
+      margin-top:12px;
+    }
+    .remove-btn{
+      margin-top:12px;
+      border:0;
+      background:#fee2e2;
+      color:#991b1b;
+      padding:8px 10px;
+      border-radius:8px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    @media(max-width:950px){
+      .listing-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:650px){
+      .listing-grid,.admin-form{grid-template-columns:1fr;}
+      .admin-form .full{grid-column:auto;}
+    }
+
+</style>
 </head>
 
 <body>
@@ -648,6 +785,8 @@
     <nav>
       <a href="#inicio">Inicio</a>
       <a href="#servicios">Servicios</a>
+      <a href="#rentacar">Rent a Car</a>
+      <a href="#inmobiliaria">Inmobiliaria</a>
       <a href="#viajes">Viajes</a>
       <a href="#gps">GPS</a>
       <a href="#migratoria">Migración</a>
@@ -1100,6 +1239,97 @@
     </div>
   </section>
 
+
+  <!-- RENT A CAR -->
+  <section class="featured-section" id="rentacar">
+    <div class="container">
+      <div class="section-title">
+        <span class="featured-badge">Destacado</span>
+        <h2>DHABEG Rent a Car</h2>
+        <p>Vehículos disponibles para renta con precio, características y contacto directo.</p>
+      </div>
+      <div class="listing-toolbar">
+        <strong>Vehículos disponibles</strong>
+        <a class="btn btn-red" href="#administrador">Administrar vehículos</a>
+      </div>
+      <div class="listing-grid" id="rentacarGrid"></div>
+    </div>
+  </section>
+
+  <!-- INMOBILIARIA -->
+  <section id="inmobiliaria">
+    <div class="container">
+      <div class="section-title">
+        <small>Propiedades</small>
+        <h2>DHABEG Inmobiliaria</h2>
+        <p>Casas, apartamentos, solares y locales con imágenes, especificaciones y valor.</p>
+      </div>
+      <div class="listing-toolbar">
+        <strong>Inmuebles disponibles</strong>
+        <a class="btn btn-blue" href="#administrador">Administrar inmuebles</a>
+      </div>
+      <div class="listing-grid" id="inmobiliariaGrid"></div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="admin-panel" id="administrador">
+    <div class="container">
+      <div class="section-title">
+        <small style="color:#7dc8ff">Panel interno</small>
+        <h2 style="color:white">Administrador de publicaciones</h2>
+        <p style="color:#dce9f4">Agrega vehículos de renta e inmuebles directamente desde esta página.</p>
+      </div>
+
+      <div class="admin-box">
+        <div class="admin-tabs">
+          <button type="button" id="tabCar" class="active" onclick="showAdminTab('car')">Nuevo vehículo</button>
+          <button type="button" id="tabProperty" onclick="showAdminTab('property')">Nuevo inmueble</button>
+        </div>
+
+        <form id="carForm" class="admin-form">
+          <input id="carName" placeholder="Marca y modelo" required>
+          <input id="carPrice" placeholder="Precio de renta por día" required>
+          <input id="carYear" placeholder="Año">
+          <input id="carTransmission" placeholder="Transmisión">
+          <input id="carSeats" placeholder="Cantidad de pasajeros">
+          <input id="carFuel" placeholder="Combustible">
+          <input id="carImage" class="full" type="file" accept="image/*">
+          <textarea id="carDescription" class="full" placeholder="Descripción y condiciones"></textarea>
+          <div class="admin-actions full">
+            <button class="btn btn-red" type="submit">Publicar vehículo</button>
+          </div>
+        </form>
+
+        <form id="propertyForm" class="admin-form" style="display:none">
+          <input id="propertyTitle" placeholder="Título del inmueble" required>
+          <input id="propertyPrice" placeholder="Valor / precio" required>
+          <select id="propertyType">
+            <option>Casa</option>
+            <option>Apartamento</option>
+            <option>Villa</option>
+            <option>Solar</option>
+            <option>Local comercial</option>
+          </select>
+          <input id="propertyLocation" placeholder="Ubicación">
+          <input id="propertyRooms" placeholder="Habitaciones">
+          <input id="propertyBaths" placeholder="Baños">
+          <input id="propertyArea" placeholder="Metros / área">
+          <input id="propertyImage" type="file" accept="image/*">
+          <textarea id="propertyDescription" class="full" placeholder="Descripción y especificaciones"></textarea>
+          <div class="admin-actions full">
+            <button class="btn btn-blue" type="submit">Publicar inmueble</button>
+          </div>
+        </form>
+
+        <p class="admin-note">
+          Este panel funciona actualmente en el navegador y guarda las publicaciones en este dispositivo.
+          Para administrar desde cualquier celular o computadora y conservar las fotos en línea, hay que conectarlo a una base de datos como Firebase.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- BENEFITS -->
   <section class="benefits">
     <div class="container benefit-grid">
@@ -1305,6 +1535,163 @@
     <p>© 2026 DHABEG · Todos los derechos reservados.</p>
   </div>
 </footer>
+
+
+<script>
+  const DEFAULT_CAR_IMG = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80";
+  const DEFAULT_PROPERTY_IMG = "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80";
+
+  const readStore = (key) => {
+    try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+    catch(e){ return []; }
+  };
+  const saveStore = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
+  function fileToDataUrl(file){
+    return new Promise(resolve => {
+      if(!file){ resolve(""); return; }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showAdminTab(type){
+    const car = type === "car";
+    document.getElementById("carForm").style.display = car ? "grid" : "none";
+    document.getElementById("propertyForm").style.display = car ? "none" : "grid";
+    document.getElementById("tabCar").classList.toggle("active", car);
+    document.getElementById("tabProperty").classList.toggle("active", !car);
+  }
+
+  function renderCars(){
+    const grid = document.getElementById("rentacarGrid");
+    const cars = readStore("dhabeg_cars");
+    if(!cars.length){
+      grid.innerHTML = `<article class="listing-card">
+        <img src="${DEFAULT_CAR_IMG}" alt="Vehículo de renta">
+        <div class="listing-card-body">
+          <h3>Ejemplo: Hyundai Tucson</h3>
+          <div class="listing-price">RD$ 3,500 / día</div>
+          <div class="spec-list">
+            <span>2024</span><span>Automática</span><span>5 pasajeros</span><span>Gasolina</span>
+          </div>
+          <p>Agrega tus vehículos desde el panel administrador.</p>
+        </div>
+      </article>`;
+      return;
+    }
+    grid.innerHTML = cars.map((c,i)=>`<article class="listing-card">
+      <img src="${c.image || DEFAULT_CAR_IMG}" alt="${c.name}">
+      <div class="listing-card-body">
+        <h3>${c.name}</h3>
+        <div class="listing-price">${c.price}</div>
+        <div class="spec-list">
+          <span>${c.year || "Año no indicado"}</span>
+          <span>${c.transmission || "Transmisión no indicada"}</span>
+          <span>${c.seats || "Pasajeros no indicados"}</span>
+          <span>${c.fuel || "Combustible no indicado"}</span>
+        </div>
+        <p>${c.description || ""}</p>
+        <a class="btn btn-red" target="_blank" href="https://wa.me/18495226533?text=Hola%20quiero%20información%20sobre%20el%20vehículo%20${encodeURIComponent(c.name)}">Reservar / Consultar</a>
+        <button class="remove-btn" onclick="removeCar(${i})">Eliminar publicación</button>
+      </div>
+    </article>`).join("");
+  }
+
+  function renderProperties(){
+    const grid = document.getElementById("inmobiliariaGrid");
+    const items = readStore("dhabeg_properties");
+    if(!items.length){
+      grid.innerHTML = `<article class="listing-card">
+        <img src="${DEFAULT_PROPERTY_IMG}" alt="Inmueble">
+        <div class="listing-card-body">
+          <h3>Ejemplo: Apartamento en Santo Domingo</h3>
+          <div class="listing-price">RD$ 6,500,000</div>
+          <div class="spec-list">
+            <span>Apartamento</span><span>Santo Domingo</span><span>3 habitaciones</span><span>2 baños</span>
+          </div>
+          <p>Agrega tus propiedades desde el panel administrador.</p>
+        </div>
+      </article>`;
+      return;
+    }
+    grid.innerHTML = items.map((p,i)=>`<article class="listing-card">
+      <img src="${p.image || DEFAULT_PROPERTY_IMG}" alt="${p.title}">
+      <div class="listing-card-body">
+        <h3>${p.title}</h3>
+        <div class="listing-price">${p.price}</div>
+        <div class="spec-list">
+          <span>${p.type || ""}</span>
+          <span>${p.location || "Ubicación no indicada"}</span>
+          <span>${p.rooms || "Habitaciones no indicadas"}</span>
+          <span>${p.baths || "Baños no indicados"}</span>
+          <span>${p.area || "Área no indicada"}</span>
+        </div>
+        <p>${p.description || ""}</p>
+        <a class="btn btn-blue" target="_blank" href="https://wa.me/18495226533?text=Hola%20quiero%20información%20sobre%20el%20inmueble%20${encodeURIComponent(p.title)}">Consultar inmueble</a>
+        <button class="remove-btn" onclick="removeProperty(${i})">Eliminar publicación</button>
+      </div>
+    </article>`).join("");
+  }
+
+  function removeCar(i){
+    const cars = readStore("dhabeg_cars");
+    cars.splice(i,1);
+    saveStore("dhabeg_cars", cars);
+    renderCars();
+  }
+  function removeProperty(i){
+    const items = readStore("dhabeg_properties");
+    items.splice(i,1);
+    saveStore("dhabeg_properties", items);
+    renderProperties();
+  }
+
+  document.getElementById("carForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const image = await fileToDataUrl(document.getElementById("carImage").files[0]);
+    const cars = readStore("dhabeg_cars");
+    cars.unshift({
+      name:carName.value.trim(),
+      price:carPrice.value.trim(),
+      year:carYear.value.trim(),
+      transmission:carTransmission.value.trim(),
+      seats:carSeats.value.trim(),
+      fuel:carFuel.value.trim(),
+      description:carDescription.value.trim(),
+      image
+    });
+    saveStore("dhabeg_cars", cars);
+    e.target.reset();
+    renderCars();
+    location.hash = "rentacar";
+  });
+
+  document.getElementById("propertyForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const image = await fileToDataUrl(document.getElementById("propertyImage").files[0]);
+    const items = readStore("dhabeg_properties");
+    items.unshift({
+      title:propertyTitle.value.trim(),
+      price:propertyPrice.value.trim(),
+      type:propertyType.value,
+      location:propertyLocation.value.trim(),
+      rooms:propertyRooms.value.trim(),
+      baths:propertyBaths.value.trim(),
+      area:propertyArea.value.trim(),
+      description:propertyDescription.value.trim(),
+      image
+    });
+    saveStore("dhabeg_properties", items);
+    e.target.reset();
+    renderProperties();
+    location.hash = "inmobiliaria";
+  });
+
+  renderCars();
+  renderProperties();
+</script>
 
 </body>
 </html>
