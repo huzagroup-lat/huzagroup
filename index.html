@@ -1282,6 +1282,22 @@
       </div>
 
       <div class="admin-box">
+        <div id="adminLogin">
+          <h3 style="margin-bottom:14px">Acceso de administrador</h3>
+          <form id="loginForm" class="admin-form">
+            <input id="adminEmail" type="email" placeholder="Correo administrador" required>
+            <input id="adminPassword" type="password" placeholder="Contraseña" required>
+            <div class="admin-actions full">
+              <button class="btn btn-blue" type="submit">Iniciar sesión</button>
+            </div>
+          </form>
+          <p id="adminStatus" class="admin-note"></p>
+        </div>
+
+        <div id="adminContent" style="display:none">
+          <div class="admin-actions" style="justify-content:flex-end;margin-bottom:12px">
+            <button id="logoutBtn" class="btn btn-red" type="button">Cerrar sesión</button>
+          </div>
         <div class="admin-tabs">
           <button type="button" id="tabCar" class="active" onclick="showAdminTab('car')">Nuevo vehículo</button>
           <button type="button" id="tabProperty" onclick="showAdminTab('property')">Nuevo inmueble</button>
@@ -1294,7 +1310,7 @@
           <input id="carTransmission" placeholder="Transmisión">
           <input id="carSeats" placeholder="Cantidad de pasajeros">
           <input id="carFuel" placeholder="Combustible">
-          <input id="carImage" class="full" type="file" accept="image/*">
+          <input id="carImageUrl" class="full" type="url" placeholder="URL pública de la imagen del vehículo">
           <textarea id="carDescription" class="full" placeholder="Descripción y condiciones"></textarea>
           <div class="admin-actions full">
             <button class="btn btn-red" type="submit">Publicar vehículo</button>
@@ -1315,7 +1331,7 @@
           <input id="propertyRooms" placeholder="Habitaciones">
           <input id="propertyBaths" placeholder="Baños">
           <input id="propertyArea" placeholder="Metros / área">
-          <input id="propertyImage" type="file" accept="image/*">
+          <input id="propertyImageUrl" type="url" placeholder="URL pública de la imagen del inmueble">
           <textarea id="propertyDescription" class="full" placeholder="Descripción y especificaciones"></textarea>
           <div class="admin-actions full">
             <button class="btn btn-blue" type="submit">Publicar inmueble</button>
@@ -1323,9 +1339,10 @@
         </form>
 
         <p class="admin-note">
-          Este panel funciona actualmente en el navegador y guarda las publicaciones en este dispositivo.
-          Para administrar desde cualquier celular o computadora y conservar las fotos en línea, hay que conectarlo a una base de datos como Firebase.
+          Las publicaciones se guardan en Firebase y se muestran en todos los dispositivos.
+          Para las fotos, pega temporalmente una URL pública de imagen.
         </p>
+        </div>
       </div>
     </div>
   </section>
@@ -1537,160 +1554,180 @@
 </footer>
 
 
-<script>
-  const DEFAULT_CAR_IMG = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80";
-  const DEFAULT_PROPERTY_IMG = "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80";
 
-  const readStore = (key) => {
-    try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-    catch(e){ return []; }
-  };
-  const saveStore = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-  function fileToDataUrl(file){
-    return new Promise(resolve => {
-      if(!file){ resolve(""); return; }
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(file);
-    });
+const firebaseConfig = {
+  apiKey: "AIzaSyBeYmwmAVTG6IQ24G5KsyBvc249YzE3Lwl",
+  authDomain: "dhabeg-web.firebaseapp.com",
+  projectId: "dhabeg-web",
+  storageBucket: "dhabeg-web.firebasestorage.app",
+  messagingSenderId: "939224816004",
+  appId: "1:939224816004:web:2294baec0c5b51bdd4e5d1"
+};
+
+const ADMIN_UID = "C0SYW11NkPa354619yposxHvBFr2";
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const DEFAULT_CAR_IMG = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80";
+const DEFAULT_PROPERTY_IMG = "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80";
+
+let adminActivo = false;
+let vehiculosCache = [];
+let inmueblesCache = [];
+
+const esc = (v="") => String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+
+window.showAdminTab = function(type){
+  const car = type === "car";
+  document.getElementById("carForm").style.display = car ? "grid" : "none";
+  document.getElementById("propertyForm").style.display = car ? "none" : "grid";
+  document.getElementById("tabCar").classList.toggle("active", car);
+  document.getElementById("tabProperty").classList.toggle("active", !car);
+};
+
+function renderCars(){
+  const grid = document.getElementById("rentacarGrid");
+  if(!vehiculosCache.length){
+    grid.innerHTML = `<article class="listing-card"><img src="${DEFAULT_CAR_IMG}" alt="Vehículo"><div class="listing-card-body"><h3>Próximamente nuevos vehículos</h3><p>Consulta disponibilidad por WhatsApp.</p></div></article>`;
+    return;
   }
-
-  function showAdminTab(type){
-    const car = type === "car";
-    document.getElementById("carForm").style.display = car ? "grid" : "none";
-    document.getElementById("propertyForm").style.display = car ? "none" : "grid";
-    document.getElementById("tabCar").classList.toggle("active", car);
-    document.getElementById("tabProperty").classList.toggle("active", !car);
-  }
-
-  function renderCars(){
-    const grid = document.getElementById("rentacarGrid");
-    const cars = readStore("dhabeg_cars");
-    if(!cars.length){
-      grid.innerHTML = `<article class="listing-card">
-        <img src="${DEFAULT_CAR_IMG}" alt="Vehículo de renta">
-        <div class="listing-card-body">
-          <h3>Ejemplo: Hyundai Tucson</h3>
-          <div class="listing-price">RD$ 3,500 / día</div>
-          <div class="spec-list">
-            <span>2024</span><span>Automática</span><span>5 pasajeros</span><span>Gasolina</span>
-          </div>
-          <p>Agrega tus vehículos desde el panel administrador.</p>
-        </div>
-      </article>`;
-      return;
-    }
-    grid.innerHTML = cars.map((c,i)=>`<article class="listing-card">
-      <img src="${c.image || DEFAULT_CAR_IMG}" alt="${c.name}">
+  grid.innerHTML = vehiculosCache.map(c => `
+    <article class="listing-card">
+      <img src="${esc(c.imagen || DEFAULT_CAR_IMG)}" alt="${esc(c.nombre || "Vehículo")}">
       <div class="listing-card-body">
-        <h3>${c.name}</h3>
-        <div class="listing-price">${c.price}</div>
+        <h3>${esc(c.nombre || "")}</h3>
+        <div class="listing-price">RD$ ${Number(c.precioDia || 0).toLocaleString("es-DO")} / día</div>
         <div class="spec-list">
-          <span>${c.year || "Año no indicado"}</span>
-          <span>${c.transmission || "Transmisión no indicada"}</span>
-          <span>${c.seats || "Pasajeros no indicados"}</span>
-          <span>${c.fuel || "Combustible no indicado"}</span>
+          <span>${esc(c.anio || "")}</span><span>${esc(c.transmision || "")}</span>
+          <span>${esc(c.pasajeros || "")} pasajeros</span><span>${esc(c.combustible || "")}</span>
         </div>
-        <p>${c.description || ""}</p>
-        <a class="btn btn-red" target="_blank" href="https://wa.me/18495226533?text=Hola%20quiero%20información%20sobre%20el%20vehículo%20${encodeURIComponent(c.name)}">Reservar / Consultar</a>
-        <button class="remove-btn" onclick="removeCar(${i})">Eliminar publicación</button>
+        <p>${esc(c.descripcion || "")}</p>
+        <a class="btn btn-red" target="_blank" href="https://wa.me/18495226533?text=${encodeURIComponent("Hola, quiero información sobre el vehículo " + (c.nombre || ""))}">Reservar / Consultar</a>
+        ${adminActivo ? `<button class="remove-btn" onclick="eliminarVehiculo('${c.id}')">Eliminar publicación</button>` : ""}
       </div>
     </article>`).join("");
-  }
+}
 
-  function renderProperties(){
-    const grid = document.getElementById("inmobiliariaGrid");
-    const items = readStore("dhabeg_properties");
-    if(!items.length){
-      grid.innerHTML = `<article class="listing-card">
-        <img src="${DEFAULT_PROPERTY_IMG}" alt="Inmueble">
-        <div class="listing-card-body">
-          <h3>Ejemplo: Apartamento en Santo Domingo</h3>
-          <div class="listing-price">RD$ 6,500,000</div>
-          <div class="spec-list">
-            <span>Apartamento</span><span>Santo Domingo</span><span>3 habitaciones</span><span>2 baños</span>
-          </div>
-          <p>Agrega tus propiedades desde el panel administrador.</p>
-        </div>
-      </article>`;
-      return;
-    }
-    grid.innerHTML = items.map((p,i)=>`<article class="listing-card">
-      <img src="${p.image || DEFAULT_PROPERTY_IMG}" alt="${p.title}">
+function renderProperties(){
+  const grid = document.getElementById("inmobiliariaGrid");
+  if(!inmueblesCache.length){
+    grid.innerHTML = `<article class="listing-card"><img src="${DEFAULT_PROPERTY_IMG}" alt="Inmueble"><div class="listing-card-body"><h3>Próximamente nuevas propiedades</h3><p>Consulta disponibilidad por WhatsApp.</p></div></article>`;
+    return;
+  }
+  grid.innerHTML = inmueblesCache.map(p => `
+    <article class="listing-card">
+      <img src="${esc(p.imagen || DEFAULT_PROPERTY_IMG)}" alt="${esc(p.titulo || "Inmueble")}">
       <div class="listing-card-body">
-        <h3>${p.title}</h3>
-        <div class="listing-price">${p.price}</div>
+        <h3>${esc(p.titulo || "")}</h3>
+        <div class="listing-price">RD$ ${Number(p.precio || 0).toLocaleString("es-DO")}</div>
         <div class="spec-list">
-          <span>${p.type || ""}</span>
-          <span>${p.location || "Ubicación no indicada"}</span>
-          <span>${p.rooms || "Habitaciones no indicadas"}</span>
-          <span>${p.baths || "Baños no indicados"}</span>
-          <span>${p.area || "Área no indicada"}</span>
+          <span>${esc(p.tipo || "")}</span><span>${esc(p.ubicacion || "")}</span>
+          <span>${esc(p.habitaciones || "")} habitaciones</span><span>${esc(p.banos || "")} baños</span>
+          <span>${esc(p.area || "")}</span>
         </div>
-        <p>${p.description || ""}</p>
-        <a class="btn btn-blue" target="_blank" href="https://wa.me/18495226533?text=Hola%20quiero%20información%20sobre%20el%20inmueble%20${encodeURIComponent(p.title)}">Consultar inmueble</a>
-        <button class="remove-btn" onclick="removeProperty(${i})">Eliminar publicación</button>
+        <p>${esc(p.descripcion || "")}</p>
+        <a class="btn btn-blue" target="_blank" href="https://wa.me/18495226533?text=${encodeURIComponent("Hola, quiero información sobre el inmueble " + (p.titulo || ""))}">Consultar inmueble</a>
+        ${adminActivo ? `<button class="remove-btn" onclick="eliminarInmueble('${p.id}')">Eliminar publicación</button>` : ""}
       </div>
     </article>`).join("");
-  }
+}
 
-  function removeCar(i){
-    const cars = readStore("dhabeg_cars");
-    cars.splice(i,1);
-    saveStore("dhabeg_cars", cars);
-    renderCars();
-  }
-  function removeProperty(i){
-    const items = readStore("dhabeg_properties");
-    items.splice(i,1);
-    saveStore("dhabeg_properties", items);
-    renderProperties();
-  }
+onSnapshot(collection(db, "vehiculos"), snap => {
+  vehiculosCache = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(v => v.disponible !== false);
+  renderCars();
+});
 
-  document.getElementById("carForm").addEventListener("submit", async e=>{
-    e.preventDefault();
-    const image = await fileToDataUrl(document.getElementById("carImage").files[0]);
-    const cars = readStore("dhabeg_cars");
-    cars.unshift({
-      name:carName.value.trim(),
-      price:carPrice.value.trim(),
-      year:carYear.value.trim(),
-      transmission:carTransmission.value.trim(),
-      seats:carSeats.value.trim(),
-      fuel:carFuel.value.trim(),
-      description:carDescription.value.trim(),
-      image
-    });
-    saveStore("dhabeg_cars", cars);
+onSnapshot(collection(db, "inmuebles"), snap => {
+  inmueblesCache = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(v => v.disponible !== false);
+  renderProperties();
+});
+
+const adminLogin = document.getElementById("adminLogin");
+const adminContent = document.getElementById("adminContent");
+const adminStatus = document.getElementById("adminStatus");
+const logoutBtn = document.getElementById("logoutBtn");
+
+document.getElementById("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  adminStatus.textContent = "Iniciando sesión...";
+  try{
+    const cred = await signInWithEmailAndPassword(auth,
+      document.getElementById("adminEmail").value.trim(),
+      document.getElementById("adminPassword").value
+    );
+    if(cred.user.uid !== ADMIN_UID){
+      await signOut(auth);
+      throw new Error("Usuario sin permisos de administrador");
+    }
+    adminStatus.textContent = "Sesión iniciada.";
     e.target.reset();
-    renderCars();
-    location.hash = "rentacar";
-  });
+  }catch(err){
+    adminStatus.textContent = "No se pudo iniciar sesión.";
+  }
+});
 
-  document.getElementById("propertyForm").addEventListener("submit", async e=>{
-    e.preventDefault();
-    const image = await fileToDataUrl(document.getElementById("propertyImage").files[0]);
-    const items = readStore("dhabeg_properties");
-    items.unshift({
-      title:propertyTitle.value.trim(),
-      price:propertyPrice.value.trim(),
-      type:propertyType.value,
-      location:propertyLocation.value.trim(),
-      rooms:propertyRooms.value.trim(),
-      baths:propertyBaths.value.trim(),
-      area:propertyArea.value.trim(),
-      description:propertyDescription.value.trim(),
-      image
-    });
-    saveStore("dhabeg_properties", items);
-    e.target.reset();
-    renderProperties();
-    location.hash = "inmobiliaria";
-  });
+logoutBtn.addEventListener("click", () => signOut(auth));
 
+onAuthStateChanged(auth, user => {
+  adminActivo = !!user && user.uid === ADMIN_UID;
+  adminLogin.style.display = adminActivo ? "none" : "block";
+  adminContent.style.display = adminActivo ? "block" : "none";
+  logoutBtn.style.display = adminActivo ? "inline-flex" : "none";
   renderCars();
   renderProperties();
+});
+
+document.getElementById("carForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if(!adminActivo) return;
+  await addDoc(collection(db, "vehiculos"), {
+    nombre: document.getElementById("carName").value.trim(),
+    precioDia: Number(document.getElementById("carPrice").value || 0),
+    anio: Number(document.getElementById("carYear").value || 0),
+    transmision: document.getElementById("carTransmission").value.trim(),
+    pasajeros: Number(document.getElementById("carSeats").value || 0),
+    combustible: document.getElementById("carFuel").value.trim(),
+    descripcion: document.getElementById("carDescription").value.trim(),
+    imagen: document.getElementById("carImageUrl").value.trim(),
+    disponible: true,
+    creadoEn: serverTimestamp()
+  });
+  e.target.reset();
+  location.hash = "rentacar";
+});
+
+document.getElementById("propertyForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if(!adminActivo) return;
+  await addDoc(collection(db, "inmuebles"), {
+    titulo: document.getElementById("propertyTitle").value.trim(),
+    precio: Number(document.getElementById("propertyPrice").value || 0),
+    tipo: document.getElementById("propertyType").value,
+    ubicacion: document.getElementById("propertyLocation").value.trim(),
+    habitaciones: Number(document.getElementById("propertyRooms").value || 0),
+    banos: Number(document.getElementById("propertyBaths").value || 0),
+    area: document.getElementById("propertyArea").value.trim(),
+    descripcion: document.getElementById("propertyDescription").value.trim(),
+    imagen: document.getElementById("propertyImageUrl").value.trim(),
+    disponible: true,
+    creadoEn: serverTimestamp()
+  });
+  e.target.reset();
+  location.hash = "inmobiliaria";
+});
+
+window.eliminarVehiculo = async id => {
+  if(adminActivo && confirm("¿Eliminar este vehículo?")) await deleteDoc(doc(db, "vehiculos", id));
+};
+window.eliminarInmueble = async id => {
+  if(adminActivo && confirm("¿Eliminar este inmueble?")) await deleteDoc(doc(db, "inmuebles", id));
+};
 </script>
 
 </body>
