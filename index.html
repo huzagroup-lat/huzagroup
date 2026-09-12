@@ -1668,7 +1668,7 @@ document.getElementById("loginForm").addEventListener("submit", async e => {
     adminStatus.textContent = "Sesión iniciada.";
     e.target.reset();
   }catch(err){
-    adminStatus.textContent = "No se pudo iniciar sesión.";
+    adminStatus.textContent = "Error de acceso: " + (err.code || "") + " - " + (err.message || "Error desconocido");
   }
 });
 
