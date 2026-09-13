@@ -1427,11 +1427,16 @@
           <input id="carTransmission" placeholder="Transmisión">
           <input id="carSeats" placeholder="Cantidad de pasajeros">
           <input id="carFuel" placeholder="Combustible">
-          <input id="carImageUrl" class="full" type="url" placeholder="URL pública de la imagen del vehículo">
+          <div class="full">
+<label for="carImageFile" style="display:block;font-weight:800;margin-bottom:7px;">Foto del vehículo</label>
+<input id="carImageFile" type="file" accept="image/jpeg,image/png,image/webp" required>
+<img id="carImagePreview" alt="Vista previa del vehículo" style="display:none;margin-top:10px;max-width:280px;border-radius:12px;">
+</div>
           <textarea id="carDescription" class="full" placeholder="Descripción y condiciones"></textarea>
           <div class="admin-actions full">
-            <button class="btn btn-red" type="submit">Publicar vehículo</button>
+            <button id="publishCarBtn" class="btn btn-red" type="submit">Publicar vehículo</button>
           </div>
+          <p id="carPublishStatus" class="admin-note full"></p>
         </form>
 
         <form id="propertyForm" class="admin-form" style="display:none">
@@ -1448,16 +1453,20 @@
           <input id="propertyRooms" placeholder="Habitaciones">
           <input id="propertyBaths" placeholder="Baños">
           <input id="propertyArea" placeholder="Metros / área">
-          <input id="propertyImageUrl" type="url" placeholder="URL pública de la imagen del inmueble">
+          <div>
+<label for="propertyImageFile" style="display:block;font-weight:800;margin-bottom:7px;">Foto del inmueble</label>
+<input id="propertyImageFile" type="file" accept="image/jpeg,image/png,image/webp" required>
+<img id="propertyImagePreview" alt="Vista previa del inmueble" style="display:none;margin-top:10px;max-width:280px;border-radius:12px;">
+</div>
           <textarea id="propertyDescription" class="full" placeholder="Descripción y especificaciones"></textarea>
           <div class="admin-actions full">
-            <button class="btn btn-blue" type="submit">Publicar inmueble</button>
+            <button id="publishPropertyBtn" class="btn btn-blue" type="submit">Publicar inmueble</button>
           </div>
+          <p id="propertyPublishStatus" class="admin-note full"></p>
         </form>
 
         <p class="admin-note">
-          Las publicaciones se guardan en Firebase y se muestran en todos los dispositivos.
-          Para las fotos, pega temporalmente una URL pública de imagen.
+          Las publicaciones se guardan en Firebase y las fotos se suben directamente a Cloudinary desde tu dispositivo.
         </p>
         </div>
       </div>
@@ -1800,43 +1809,87 @@ onAuthStateChanged(auth, user => {
   renderProperties();
 });
 
+
+const CLOUDINARY_CLOUD_NAME = "ty7xtpmg";
+const CLOUDINARY_UPLOAD_PRESET = "dhabeg_sin firmar";
+
+function configurarPreview(inputId, previewId){
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+  input.addEventListener("change", () => {
+    const file = input.files && input.files[0];
+    if(!file){ preview.style.display="none"; preview.removeAttribute("src"); return; }
+    if(!file.type.startsWith("image/")){ input.value=""; alert("Selecciona un archivo de imagen válido."); return; }
+    if(file.size > 10*1024*1024){ input.value=""; alert("La imagen no puede superar 10 MB."); return; }
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  });
+}
+configurarPreview("carImageFile","carImagePreview");
+configurarPreview("propertyImageFile","propertyImagePreview");
+
+async function subirImagenCloudinary(file){
+  if(!file) throw new Error("Selecciona una foto.");
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:"POST", body:formData });
+  const data = await r.json();
+  if(!r.ok) throw new Error((data && data.error && data.error.message) || "No se pudo subir la imagen a Cloudinary.");
+  return data.secure_url;
+}
+
 document.getElementById("carForm").addEventListener("submit", async e => {
   e.preventDefault();
   if(!adminActivo) return;
-  await addDoc(collection(db, "vehiculos"), {
-    nombre: document.getElementById("carName").value.trim(),
-    precioDia: Number(document.getElementById("carPrice").value || 0),
-    anio: Number(document.getElementById("carYear").value || 0),
-    transmision: document.getElementById("carTransmission").value.trim(),
-    pasajeros: Number(document.getElementById("carSeats").value || 0),
-    combustible: document.getElementById("carFuel").value.trim(),
-    descripcion: document.getElementById("carDescription").value.trim(),
-    imagen: document.getElementById("carImageUrl").value.trim(),
-    disponible: true,
-    creadoEn: serverTimestamp()
-  });
-  e.target.reset();
-  location.hash = "rentacar";
+  const btn=document.getElementById("publishCarBtn");
+  const status=document.getElementById("carPublishStatus");
+  const file=document.getElementById("carImageFile").files[0];
+  btn.disabled=true; status.textContent="Subiendo foto y publicando vehículo...";
+  try{
+    const imageUrl=await subirImagenCloudinary(file);
+    await addDoc(collection(db,"vehiculos"),{
+      nombre:document.getElementById("carName").value.trim(),
+      precioDia:Number(document.getElementById("carPrice").value||0),
+      anio:Number(document.getElementById("carYear").value||0),
+      transmision:document.getElementById("carTransmission").value.trim(),
+      pasajeros:Number(document.getElementById("carSeats").value||0),
+      combustible:document.getElementById("carFuel").value.trim(),
+      descripcion:document.getElementById("carDescription").value.trim(),
+      imagen:imageUrl, disponible:true, creadoEn:serverTimestamp()
+    });
+    e.target.reset();
+    const p=document.getElementById("carImagePreview"); p.style.display="none"; p.removeAttribute("src");
+    status.textContent="✓ Vehículo publicado correctamente."; location.hash="rentacar";
+  }catch(err){ console.error(err); status.textContent="Error al publicar: "+(err.message||err.code||"Error desconocido"); }
+  finally{ btn.disabled=false; }
 });
 
 document.getElementById("propertyForm").addEventListener("submit", async e => {
   e.preventDefault();
   if(!adminActivo) return;
-  await addDoc(collection(db, "inmuebles"), {
-    titulo: document.getElementById("propertyTitle").value.trim(),
-    precio: Number(document.getElementById("propertyPrice").value || 0),
-    tipo: document.getElementById("propertyType").value,
-    ubicacion: document.getElementById("propertyLocation").value.trim(),
-    habitaciones: Number(document.getElementById("propertyRooms").value || 0),
-    banos: Number(document.getElementById("propertyBaths").value || 0),
-    area: document.getElementById("propertyArea").value.trim(),
-    descripcion: document.getElementById("propertyDescription").value.trim(),
-    imagen: document.getElementById("propertyImageUrl").value.trim(),
-    disponible: true,
-    creadoEn: serverTimestamp()
-  });
-  e.target.reset();
-  location.hash = "inmobiliaria";
+  const btn=document.getElementById("publishPropertyBtn");
+  const status=document.getElementById("propertyPublishStatus");
+  const file=document.getElementById("propertyImageFile").files[0];
+  btn.disabled=true; status.textContent="Subiendo foto y publicando inmueble...";
+  try{
+    const imageUrl=await subirImagenCloudinary(file);
+    await addDoc(collection(db,"inmuebles"),{
+      titulo:document.getElementById("propertyTitle").value.trim(),
+      precio:Number(document.getElementById("propertyPrice").value||0),
+      tipo:document.getElementById("propertyType").value,
+      ubicacion:document.getElementById("propertyLocation").value.trim(),
+      habitaciones:Number(document.getElementById("propertyRooms").value||0),
+      banos:Number(document.getElementById("propertyBaths").value||0),
+      area:document.getElementById("propertyArea").value.trim(),
+      descripcion:document.getElementById("propertyDescription").value.trim(),
+      imagen:imageUrl, disponible:true, creadoEn:serverTimestamp()
+    });
+    e.target.reset();
+    const p=document.getElementById("propertyImagePreview"); p.style.display="none"; p.removeAttribute("src");
+    status.textContent="✓ Inmueble publicado correctamente."; location.hash="inmobiliaria";
+  }catch(err){ console.error(err); status.textContent="Error al publicar: "+(err.message||err.code||"Error desconocido"); }
+  finally{ btn.disabled=false; }
 });
 
 window.eliminarVehiculo = async id => {
