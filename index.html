@@ -855,6 +855,114 @@
       color:#667085;
       margin-top:12px;
     }
+
+    .photo-picker{
+      border:1px solid #ccd7e2;
+      border-radius:12px;
+      padding:14px;
+      background:#f8fbff;
+    }
+    .photo-picker label{
+      display:block;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .photo-previews{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .photo-preview-item{
+      position:relative;
+      border:2px solid transparent;
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+      min-height:105px;
+      box-shadow:0 4px 16px rgba(8,37,63,.08);
+    }
+    .photo-preview-item.cover{
+      border-color:var(--red);
+    }
+    .photo-preview-item img{
+      width:100%;
+      height:105px;
+      object-fit:cover;
+      display:block;
+    }
+    .photo-preview-actions{
+      display:flex;
+      gap:5px;
+      padding:6px;
+      flex-wrap:wrap;
+    }
+    .photo-mini-btn{
+      border:0;
+      border-radius:7px;
+      padding:5px 7px;
+      cursor:pointer;
+      font-size:11px;
+      font-weight:800;
+    }
+    .photo-mini-btn.cover-btn{background:#e7f2ff;color:#075ca3;}
+    .photo-mini-btn.remove-photo{background:#fee2e2;color:#991b1b;}
+    .cover-badge{
+      position:absolute;
+      top:6px;
+      left:6px;
+      background:var(--red);
+      color:#fff;
+      font-size:10px;
+      font-weight:900;
+      padding:4px 7px;
+      border-radius:999px;
+    }
+    .edit-btn{
+      margin-top:12px;
+      margin-right:8px;
+      border:0;
+      background:#e7f2ff;
+      color:#075ca3;
+      padding:8px 10px;
+      border-radius:8px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .cancel-edit-btn{
+      border:0;
+      background:#eef2f6;
+      color:#344054;
+      padding:11px 16px;
+      border-radius:9px;
+      font-weight:800;
+      cursor:pointer;
+      display:none;
+    }
+    .listing-main-photo{
+      width:100%;
+      height:235px;
+      object-fit:cover;
+      display:block;
+    }
+    .listing-thumbs{
+      display:flex;
+      gap:7px;
+      padding:8px 10px 0;
+      overflow-x:auto;
+      background:#fff;
+    }
+    .listing-thumb{
+      width:58px;
+      height:45px;
+      object-fit:cover;
+      border-radius:7px;
+      cursor:pointer;
+      border:2px solid #d7e0e9;
+      flex:0 0 auto;
+    }
+    .listing-thumb:hover{border-color:var(--blue);}
+
     .remove-btn{
       margin-top:12px;
       border:0;
@@ -1427,14 +1535,16 @@
           <input id="carTransmission" placeholder="Transmisión">
           <input id="carSeats" placeholder="Cantidad de pasajeros">
           <input id="carFuel" placeholder="Combustible">
-          <div class="full">
-<label for="carImageFile" style="display:block;font-weight:800;margin-bottom:7px;">Foto del vehículo</label>
-<input id="carImageFile" type="file" accept="image/jpeg,image/png,image/webp" required>
-<img id="carImagePreview" alt="Vista previa del vehículo" style="display:none;margin-top:10px;max-width:280px;border-radius:12px;">
-</div>
+          <div class="full photo-picker">
+          <label for="carImageFile">Fotos del vehículo (puedes seleccionar varias)</label>
+          <input id="carImageFile" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+          <div id="carImagePreviews" class="photo-previews"></div>
+          <p class="admin-note">Pulsa “Usar de portada” en la foto principal. Puedes añadir más fotos cuando edites.</p>
+        </div>
           <textarea id="carDescription" class="full" placeholder="Descripción y condiciones"></textarea>
           <div class="admin-actions full">
             <button id="publishCarBtn" class="btn btn-red" type="submit">Publicar vehículo</button>
+            <button id="cancelCarEditBtn" class="cancel-edit-btn" type="button">Cancelar edición</button>
           </div>
           <p id="carPublishStatus" class="admin-note full"></p>
         </form>
@@ -1453,14 +1563,16 @@
           <input id="propertyRooms" placeholder="Habitaciones">
           <input id="propertyBaths" placeholder="Baños">
           <input id="propertyArea" placeholder="Metros / área">
-          <div>
-<label for="propertyImageFile" style="display:block;font-weight:800;margin-bottom:7px;">Foto del inmueble</label>
-<input id="propertyImageFile" type="file" accept="image/jpeg,image/png,image/webp" required>
-<img id="propertyImagePreview" alt="Vista previa del inmueble" style="display:none;margin-top:10px;max-width:280px;border-radius:12px;">
-</div>
+          <div class="full photo-picker">
+          <label for="propertyImageFile">Fotos del inmueble (puedes seleccionar varias)</label>
+          <input id="propertyImageFile" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+          <div id="propertyImagePreviews" class="photo-previews"></div>
+          <p class="admin-note">Pulsa “Usar de portada” en la foto principal. Puedes añadir más fotos cuando edites.</p>
+        </div>
           <textarea id="propertyDescription" class="full" placeholder="Descripción y especificaciones"></textarea>
           <div class="admin-actions full">
             <button id="publishPropertyBtn" class="btn btn-blue" type="submit">Publicar inmueble</button>
+            <button id="cancelPropertyEditBtn" class="cancel-edit-btn" type="button">Cancelar edición</button>
           </div>
           <p id="propertyPublishStatus" class="admin-note full"></p>
         </form>
@@ -1683,7 +1795,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -1717,15 +1829,25 @@ window.showAdminTab = function(type){
   document.getElementById("tabProperty").classList.toggle("active", !car);
 };
 
+function fotosDe(item, fallback){
+  const arr = Array.isArray(item.imagenes) ? item.imagenes.filter(Boolean) : [];
+  if(item.imagen && !arr.includes(item.imagen)) arr.unshift(item.imagen);
+  return arr.length ? arr : [fallback];
+}
+
 function renderCars(){
   const grid = document.getElementById("rentacarGrid");
   if(!vehiculosCache.length){
-    grid.innerHTML = `<article class="listing-card"><img src="${DEFAULT_CAR_IMG}" alt="Vehículo"><div class="listing-card-body"><h3>Próximamente nuevos vehículos</h3><p>Consulta disponibilidad por WhatsApp.</p></div></article>`;
+    grid.innerHTML = `<article class="listing-card"><img class="listing-main-photo" src="${DEFAULT_CAR_IMG}" alt="Vehículo"><div class="listing-card-body"><h3>Próximamente nuevos vehículos</h3><p>Consulta disponibilidad por WhatsApp.</p></div></article>`;
     return;
   }
-  grid.innerHTML = vehiculosCache.map(c => `
+  grid.innerHTML = vehiculosCache.map(c => {
+    const fotos = fotosDe(c, DEFAULT_CAR_IMG);
+    const mainId = `car-main-${c.id}`;
+    return `
     <article class="listing-card">
-      <img src="${esc(c.imagen || DEFAULT_CAR_IMG)}" alt="${esc(c.nombre || "Vehículo")}">
+      <img id="${mainId}" class="listing-main-photo" src="${esc(c.imagen || fotos[0])}" alt="${esc(c.nombre || "Vehículo")}">
+      ${fotos.length > 1 ? `<div class="listing-thumbs">${fotos.map(u => `<img class="listing-thumb" src="${esc(u)}" alt="Foto" onclick="cambiarFoto('${mainId}','${esc(u)}')">`).join("")}</div>` : ""}
       <div class="listing-card-body">
         <h3>${esc(c.nombre || "")}</h3>
         <div class="listing-price">RD$ ${Number(c.precioDia || 0).toLocaleString("es-DO")} / día</div>
@@ -1735,20 +1857,25 @@ function renderCars(){
         </div>
         <p>${esc(c.descripcion || "")}</p>
         <a class="btn btn-red" target="_blank" href="https://wa.me/18495226533?text=${encodeURIComponent("Hola, quiero información sobre el vehículo " + (c.nombre || ""))}">Reservar / Consultar</a>
-        ${adminActivo ? `<button class="remove-btn" onclick="eliminarVehiculo('${c.id}')">Eliminar publicación</button>` : ""}
+        ${adminActivo ? `<div><button class="edit-btn" onclick="editarVehiculo('${c.id}')">Editar</button><button class="remove-btn" onclick="eliminarVehiculo('${c.id}')">Eliminar publicación</button></div>` : ""}
       </div>
-    </article>`).join("");
+    </article>`;
+  }).join("");
 }
 
 function renderProperties(){
   const grid = document.getElementById("inmobiliariaGrid");
   if(!inmueblesCache.length){
-    grid.innerHTML = `<article class="listing-card"><img src="${DEFAULT_PROPERTY_IMG}" alt="Inmueble"><div class="listing-card-body"><h3>Próximamente nuevas propiedades</h3><p>Consulta disponibilidad por WhatsApp.</p></div></article>`;
+    grid.innerHTML = `<article class="listing-card"><img class="listing-main-photo" src="${DEFAULT_PROPERTY_IMG}" alt="Inmueble"><div class="listing-card-body"><h3>Próximamente nuevas propiedades</h3><p>Consulta disponibilidad por WhatsApp.</p></div></article>`;
     return;
   }
-  grid.innerHTML = inmueblesCache.map(p => `
+  grid.innerHTML = inmueblesCache.map(p => {
+    const fotos = fotosDe(p, DEFAULT_PROPERTY_IMG);
+    const mainId = `property-main-${p.id}`;
+    return `
     <article class="listing-card">
-      <img src="${esc(p.imagen || DEFAULT_PROPERTY_IMG)}" alt="${esc(p.titulo || "Inmueble")}">
+      <img id="${mainId}" class="listing-main-photo" src="${esc(p.imagen || fotos[0])}" alt="${esc(p.titulo || "Inmueble")}">
+      ${fotos.length > 1 ? `<div class="listing-thumbs">${fotos.map(u => `<img class="listing-thumb" src="${esc(u)}" alt="Foto" onclick="cambiarFoto('${mainId}','${esc(u)}')">`).join("")}</div>` : ""}
       <div class="listing-card-body">
         <h3>${esc(p.titulo || "")}</h3>
         <div class="listing-price">RD$ ${Number(p.precio || 0).toLocaleString("es-DO")}</div>
@@ -1759,10 +1886,16 @@ function renderProperties(){
         </div>
         <p>${esc(p.descripcion || "")}</p>
         <a class="btn btn-blue" target="_blank" href="https://wa.me/18495226533?text=${encodeURIComponent("Hola, quiero información sobre el inmueble " + (p.titulo || ""))}">Consultar inmueble</a>
-        ${adminActivo ? `<button class="remove-btn" onclick="eliminarInmueble('${p.id}')">Eliminar publicación</button>` : ""}
+        ${adminActivo ? `<div><button class="edit-btn" onclick="editarInmueble('${p.id}')">Editar</button><button class="remove-btn" onclick="eliminarInmueble('${p.id}')">Eliminar publicación</button></div>` : ""}
       </div>
-    </article>`).join("");
+    </article>`;
+  }).join("");
 }
+
+window.cambiarFoto = (id, url) => {
+  const img = document.getElementById(id);
+  if(img) img.src = url;
+};
 
 onSnapshot(collection(db, "vehiculos"), snap => {
   vehiculosCache = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(v => v.disponible !== false);
@@ -1813,91 +1946,309 @@ onAuthStateChanged(auth, user => {
 const CLOUDINARY_CLOUD_NAME = "ty7xtpmg";
 const CLOUDINARY_UPLOAD_PRESET = "dhabeg_unsigned";
 
-function configurarPreview(inputId, previewId){
-  const input = document.getElementById(inputId);
-  const preview = document.getElementById(previewId);
-  input.addEventListener("change", () => {
-    const file = input.files && input.files[0];
-    if(!file){ preview.style.display="none"; preview.removeAttribute("src"); return; }
-    if(!file.type.startsWith("image/")){ input.value=""; alert("Selecciona un archivo de imagen válido."); return; }
-    if(file.size > 10*1024*1024){ input.value=""; alert("La imagen no puede superar 10 MB."); return; }
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
+let editCarId = null;
+let editPropertyId = null;
+let carPhotos = [];
+let propertyPhotos = [];
+let carNewFiles = [];
+let propertyNewFiles = [];
+
+function validarArchivos(files){
+  return [...files].filter(file => {
+    if(!file.type.startsWith("image/")){
+      alert(`"${file.name}" no es una imagen válida.`);
+      return false;
+    }
+    if(file.size > 10*1024*1024){
+      alert(`"${file.name}" supera el límite de 10 MB.`);
+      return false;
+    }
+    return true;
   });
 }
-configurarPreview("carImageFile","carImagePreview");
-configurarPreview("propertyImageFile","propertyImagePreview");
+
+function renderAdminPhotos(kind){
+  const isCar = kind === "car";
+  const box = document.getElementById(isCar ? "carImagePreviews" : "propertyImagePreviews");
+  const existing = isCar ? carPhotos : propertyPhotos;
+  const files = isCar ? carNewFiles : propertyNewFiles;
+
+  const existingHtml = existing.map((url, i) => `
+    <div class="photo-preview-item ${i === 0 ? "cover" : ""}">
+      ${i === 0 ? '<span class="cover-badge">PORTADA</span>' : ""}
+      <img src="${esc(url)}" alt="Foto guardada">
+      <div class="photo-preview-actions">
+        ${i !== 0 ? `<button class="photo-mini-btn cover-btn" type="button" onclick="hacerPortada('${kind}','existing',${i})">Usar de portada</button>` : ""}
+        <button class="photo-mini-btn remove-photo" type="button" onclick="quitarFoto('${kind}','existing',${i})">Quitar</button>
+      </div>
+    </div>`).join("");
+
+  const filesHtml = files.map((file, i) => {
+    const url = URL.createObjectURL(file);
+    const globalIndex = existing.length + i;
+    return `
+    <div class="photo-preview-item ${globalIndex === 0 ? "cover" : ""}">
+      ${globalIndex === 0 ? '<span class="cover-badge">PORTADA</span>' : ""}
+      <img src="${url}" alt="Foto nueva">
+      <div class="photo-preview-actions">
+        ${globalIndex !== 0 ? `<button class="photo-mini-btn cover-btn" type="button" onclick="hacerPortada('${kind}','new',${i})">Usar de portada</button>` : ""}
+        <button class="photo-mini-btn remove-photo" type="button" onclick="quitarFoto('${kind}','new',${i})">Quitar</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  box.innerHTML = existingHtml + filesHtml;
+}
+
+function prepararInputMultiple(inputId, kind){
+  document.getElementById(inputId).addEventListener("change", e => {
+    const validos = validarArchivos(e.target.files);
+    if(kind === "car") carNewFiles.push(...validos);
+    else propertyNewFiles.push(...validos);
+    e.target.value = "";
+    renderAdminPhotos(kind);
+  });
+}
+prepararInputMultiple("carImageFile","car");
+prepararInputMultiple("propertyImageFile","property");
+
+window.hacerPortada = (kind, source, index) => {
+  const existing = kind === "car" ? carPhotos : propertyPhotos;
+  const files = kind === "car" ? carNewFiles : propertyNewFiles;
+
+  if(source === "existing"){
+    const [url] = existing.splice(index,1);
+    existing.unshift(url);
+  }else{
+    const [file] = files.splice(index,1);
+    files.unshift(file);
+    // Si hay fotos existentes, la nueva debe quedar antes de ellas después de subir.
+    if(existing.length){
+      files._coverFromNew = true;
+    }
+  }
+  renderAdminPhotos(kind);
+};
+
+window.quitarFoto = (kind, source, index) => {
+  if(kind === "car"){
+    if(source === "existing") carPhotos.splice(index,1);
+    else carNewFiles.splice(index,1);
+  }else{
+    if(source === "existing") propertyPhotos.splice(index,1);
+    else propertyNewFiles.splice(index,1);
+  }
+  renderAdminPhotos(kind);
+};
 
 async function subirImagenCloudinary(file){
-  if(!file) throw new Error("Selecciona una foto.");
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-  const r = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:"POST", body:formData });
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {method:"POST",body:formData});
   const data = await r.json();
   if(!r.ok) throw new Error((data && data.error && data.error.message) || "No se pudo subir la imagen a Cloudinary.");
   return data.secure_url;
 }
 
+async function subirVarias(files, statusEl){
+  const urls = [];
+  for(let i=0;i<files.length;i++){
+    statusEl.textContent = `Subiendo foto ${i+1} de ${files.length}...`;
+    urls.push(await subirImagenCloudinary(files[i]));
+  }
+  return urls;
+}
+
+function resetCarForm(){
+  editCarId = null;
+  carPhotos = [];
+  carNewFiles = [];
+  document.getElementById("carForm").reset();
+  document.getElementById("carImagePreviews").innerHTML = "";
+  document.getElementById("publishCarBtn").textContent = "Publicar vehículo";
+  document.getElementById("cancelCarEditBtn").style.display = "none";
+  document.getElementById("carPublishStatus").textContent = "";
+}
+
+function resetPropertyForm(){
+  editPropertyId = null;
+  propertyPhotos = [];
+  propertyNewFiles = [];
+  document.getElementById("propertyForm").reset();
+  document.getElementById("propertyImagePreviews").innerHTML = "";
+  document.getElementById("publishPropertyBtn").textContent = "Publicar inmueble";
+  document.getElementById("cancelPropertyEditBtn").style.display = "none";
+  document.getElementById("propertyPublishStatus").textContent = "";
+}
+
+document.getElementById("cancelCarEditBtn").addEventListener("click", resetCarForm);
+document.getElementById("cancelPropertyEditBtn").addEventListener("click", resetPropertyForm);
+
+window.editarVehiculo = id => {
+  const c = vehiculosCache.find(x => x.id === id);
+  if(!c || !adminActivo) return;
+  editCarId = id;
+  carPhotos = fotosDe(c, DEFAULT_CAR_IMG).filter(u => u !== DEFAULT_CAR_IMG);
+  carNewFiles = [];
+
+  document.getElementById("carName").value = c.nombre || "";
+  document.getElementById("carPrice").value = c.precioDia || "";
+  document.getElementById("carYear").value = c.anio || "";
+  document.getElementById("carTransmission").value = c.transmision || "";
+  document.getElementById("carSeats").value = c.pasajeros || "";
+  document.getElementById("carFuel").value = c.combustible || "";
+  document.getElementById("carDescription").value = c.descripcion || "";
+
+  document.getElementById("publishCarBtn").textContent = "Guardar cambios";
+  document.getElementById("cancelCarEditBtn").style.display = "inline-flex";
+  document.getElementById("carPublishStatus").textContent = "Editando publicación existente.";
+  showAdminTab("car");
+  renderAdminPhotos("car");
+  location.hash = "administrador";
+  setTimeout(() => document.getElementById("carForm").scrollIntoView({behavior:"smooth",block:"center"}), 100);
+};
+
+window.editarInmueble = id => {
+  const p = inmueblesCache.find(x => x.id === id);
+  if(!p || !adminActivo) return;
+  editPropertyId = id;
+  propertyPhotos = fotosDe(p, DEFAULT_PROPERTY_IMG).filter(u => u !== DEFAULT_PROPERTY_IMG);
+  propertyNewFiles = [];
+
+  document.getElementById("propertyTitle").value = p.titulo || "";
+  document.getElementById("propertyPrice").value = p.precio || "";
+  document.getElementById("propertyType").value = p.tipo || "Casa";
+  document.getElementById("propertyLocation").value = p.ubicacion || "";
+  document.getElementById("propertyRooms").value = p.habitaciones || "";
+  document.getElementById("propertyBaths").value = p.banos || "";
+  document.getElementById("propertyArea").value = p.area || "";
+  document.getElementById("propertyDescription").value = p.descripcion || "";
+
+  document.getElementById("publishPropertyBtn").textContent = "Guardar cambios";
+  document.getElementById("cancelPropertyEditBtn").style.display = "inline-flex";
+  document.getElementById("propertyPublishStatus").textContent = "Editando publicación existente.";
+  showAdminTab("property");
+  renderAdminPhotos("property");
+  location.hash = "administrador";
+  setTimeout(() => document.getElementById("propertyForm").scrollIntoView({behavior:"smooth",block:"center"}), 100);
+};
+
 document.getElementById("carForm").addEventListener("submit", async e => {
   e.preventDefault();
   if(!adminActivo) return;
-  const btn=document.getElementById("publishCarBtn");
-  const status=document.getElementById("carPublishStatus");
-  const file=document.getElementById("carImageFile").files[0];
-  btn.disabled=true; status.textContent="Subiendo foto y publicando vehículo...";
+
+  const btn = document.getElementById("publishCarBtn");
+  const status = document.getElementById("carPublishStatus");
+  btn.disabled = true;
+
   try{
-    const imageUrl=await subirImagenCloudinary(file);
-    await addDoc(collection(db,"vehiculos"),{
-      nombre:document.getElementById("carName").value.trim(),
-      precioDia:Number(document.getElementById("carPrice").value||0),
-      anio:Number(document.getElementById("carYear").value||0),
-      transmision:document.getElementById("carTransmission").value.trim(),
-      pasajeros:Number(document.getElementById("carSeats").value||0),
-      combustible:document.getElementById("carFuel").value.trim(),
-      descripcion:document.getElementById("carDescription").value.trim(),
-      imagen:imageUrl, disponible:true, creadoEn:serverTimestamp()
-    });
-    e.target.reset();
-    const p=document.getElementById("carImagePreview"); p.style.display="none"; p.removeAttribute("src");
-    status.textContent="✓ Vehículo publicado correctamente."; location.hash="rentacar";
-  }catch(err){ console.error(err); status.textContent="Error al publicar: "+(err.message||err.code||"Error desconocido"); }
-  finally{ btn.disabled=false; }
+    if(!editCarId && !carPhotos.length && !carNewFiles.length) throw new Error("Selecciona al menos una foto.");
+
+    const nuevas = await subirVarias(carNewFiles, status);
+    let todas = [...carPhotos, ...nuevas];
+
+    // Si la portada fue seleccionada desde archivos nuevos, poner la primera nueva al frente.
+    if(carNewFiles._coverFromNew && nuevas.length){
+      todas = [nuevas[0], ...carPhotos, ...nuevas.slice(1)];
+    }
+
+    if(!todas.length) throw new Error("La publicación debe conservar al menos una foto.");
+
+    const datos = {
+      nombre: document.getElementById("carName").value.trim(),
+      precioDia: Number(document.getElementById("carPrice").value || 0),
+      anio: Number(document.getElementById("carYear").value || 0),
+      transmision: document.getElementById("carTransmission").value.trim(),
+      pasajeros: Number(document.getElementById("carSeats").value || 0),
+      combustible: document.getElementById("carFuel").value.trim(),
+      descripcion: document.getElementById("carDescription").value.trim(),
+      imagen: todas[0],
+      imagenes: todas,
+      disponible: true,
+      actualizadoEn: serverTimestamp()
+    };
+
+    if(editCarId){
+      await updateDoc(doc(db,"vehiculos",editCarId), datos);
+      status.textContent = "✓ Vehículo actualizado correctamente.";
+    }else{
+      datos.creadoEn = serverTimestamp();
+      await addDoc(collection(db,"vehiculos"), datos);
+      status.textContent = "✓ Vehículo publicado correctamente.";
+    }
+
+    resetCarForm();
+    location.hash = "rentacar";
+  }catch(err){
+    console.error(err);
+    status.textContent = "Error: " + (err.message || err.code || "Error desconocido");
+  }finally{
+    btn.disabled = false;
+  }
 });
 
 document.getElementById("propertyForm").addEventListener("submit", async e => {
   e.preventDefault();
   if(!adminActivo) return;
-  const btn=document.getElementById("publishPropertyBtn");
-  const status=document.getElementById("propertyPublishStatus");
-  const file=document.getElementById("propertyImageFile").files[0];
-  btn.disabled=true; status.textContent="Subiendo foto y publicando inmueble...";
+
+  const btn = document.getElementById("publishPropertyBtn");
+  const status = document.getElementById("propertyPublishStatus");
+  btn.disabled = true;
+
   try{
-    const imageUrl=await subirImagenCloudinary(file);
-    await addDoc(collection(db,"inmuebles"),{
-      titulo:document.getElementById("propertyTitle").value.trim(),
-      precio:Number(document.getElementById("propertyPrice").value||0),
-      tipo:document.getElementById("propertyType").value,
-      ubicacion:document.getElementById("propertyLocation").value.trim(),
-      habitaciones:Number(document.getElementById("propertyRooms").value||0),
-      banos:Number(document.getElementById("propertyBaths").value||0),
-      area:document.getElementById("propertyArea").value.trim(),
-      descripcion:document.getElementById("propertyDescription").value.trim(),
-      imagen:imageUrl, disponible:true, creadoEn:serverTimestamp()
-    });
-    e.target.reset();
-    const p=document.getElementById("propertyImagePreview"); p.style.display="none"; p.removeAttribute("src");
-    status.textContent="✓ Inmueble publicado correctamente."; location.hash="inmobiliaria";
-  }catch(err){ console.error(err); status.textContent="Error al publicar: "+(err.message||err.code||"Error desconocido"); }
-  finally{ btn.disabled=false; }
+    if(!editPropertyId && !propertyPhotos.length && !propertyNewFiles.length) throw new Error("Selecciona al menos una foto.");
+
+    const nuevas = await subirVarias(propertyNewFiles, status);
+    let todas = [...propertyPhotos, ...nuevas];
+
+    if(propertyNewFiles._coverFromNew && nuevas.length){
+      todas = [nuevas[0], ...propertyPhotos, ...nuevas.slice(1)];
+    }
+
+    if(!todas.length) throw new Error("La publicación debe conservar al menos una foto.");
+
+    const datos = {
+      titulo: document.getElementById("propertyTitle").value.trim(),
+      precio: Number(document.getElementById("propertyPrice").value || 0),
+      tipo: document.getElementById("propertyType").value,
+      ubicacion: document.getElementById("propertyLocation").value.trim(),
+      habitaciones: Number(document.getElementById("propertyRooms").value || 0),
+      banos: Number(document.getElementById("propertyBaths").value || 0),
+      area: document.getElementById("propertyArea").value.trim(),
+      descripcion: document.getElementById("propertyDescription").value.trim(),
+      imagen: todas[0],
+      imagenes: todas,
+      disponible: true,
+      actualizadoEn: serverTimestamp()
+    };
+
+    if(editPropertyId){
+      await updateDoc(doc(db,"inmuebles",editPropertyId), datos);
+      status.textContent = "✓ Inmueble actualizado correctamente.";
+    }else{
+      datos.creadoEn = serverTimestamp();
+      await addDoc(collection(db,"inmuebles"), datos);
+      status.textContent = "✓ Inmueble publicado correctamente.";
+    }
+
+    resetPropertyForm();
+    location.hash = "inmobiliaria";
+  }catch(err){
+    console.error(err);
+    status.textContent = "Error: " + (err.message || err.code || "Error desconocido");
+  }finally{
+    btn.disabled = false;
+  }
 });
 
 window.eliminarVehiculo = async id => {
-  if(adminActivo && confirm("¿Eliminar este vehículo?")) await deleteDoc(doc(db, "vehiculos", id));
+  if(adminActivo && confirm("¿Eliminar este vehículo?")) await deleteDoc(doc(db,"vehiculos",id));
 };
 window.eliminarInmueble = async id => {
-  if(adminActivo && confirm("¿Eliminar este inmueble?")) await deleteDoc(doc(db, "inmuebles", id));
+  if(adminActivo && confirm("¿Eliminar este inmueble?")) await deleteDoc(doc(db,"inmuebles",id));
 };
+
 </script>
 
 </body>
